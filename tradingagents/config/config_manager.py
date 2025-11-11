@@ -141,7 +141,7 @@ class ConfigManager:
             return False
         
         # 检查格式：sk- 后面应该是48个字符的字母数字组合
-        pattern = r'^sk-[A-Za-z0-9]{48}$'
+        pattern = r'^sk-[A-Za-z0-9\-_]{20,}$'
         if not re.match(pattern, api_key):
             return False
         
