@@ -137,7 +137,7 @@ class ConfigManager:
             return False
         
         # 检查长度（OpenAI密钥通常为51个字符）
-        if len(api_key) != 51:
+        if len(api_key) < 48:
             return False
         
         # 检查格式：sk- 后面应该是48个字符的字母数字组合

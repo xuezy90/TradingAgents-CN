@@ -138,7 +138,7 @@ def test_dashscope_react_agent():
     print("=" * 60)
     
     try:
-        from langchain.agents import create_react_agent, AgentExecutor
+        from langchain.agents import create_agent
         from langchain_core.prompts import PromptTemplate
         from langchain_core.tools import BaseTool
         
@@ -218,11 +218,9 @@ Question: {input}
         prompt = PromptTemplate.from_template(prompt_template)
         
         # 创建agent
-        agent = create_react_agent(dashscope_llm, tools, prompt)
-        agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=3)
-        
+        agent = create_agent(model=dashscope_llm, tools=tools, prompt=prompt)
         print("📤 执行ReAct Agent...")
-        result = agent_executor.invoke({
+        result = agent.invoke({
             "input": "请对中国A股股票000002进行详细的技术分析"
         })
         

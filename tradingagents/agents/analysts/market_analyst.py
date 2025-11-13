@@ -1,5 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import create_react_agent, AgentExecutor
+from langchain.agents import create_agent
 from langchain import hub
 import time
 import json
@@ -230,18 +230,10 @@ def create_market_analyst_react(llm, toolkit):
             try:
                 # 创建ReAct Agent
                 prompt = hub.pull("hwchase17/react")
-                agent = create_react_agent(llm, tools, prompt)
-                agent_executor = AgentExecutor(
-                    agent=agent,
-                    tools=tools,
-                    verbose=True,
-                    handle_parsing_errors=True,
-                    max_iterations=10,  # 增加到10次迭代，确保有足够时间完成分析
-                    max_execution_time=180  # 增加到3分钟，给更多时间生成详细报告
-                )
+                agent = create_agent(model=llm, tools=tools, prompt=prompt)
 
                 logger.debug(f"📈 [DEBUG] 执行ReAct Agent查询...")
-                result = agent_executor.invoke({'input': query})
+                result = agent.invoke({'input': query})
 
                 report = result['output']
                 logger.info(f"📈 [市场分析师] ReAct Agent完成，报告长度: {len(report)}")
