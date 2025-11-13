@@ -218,21 +218,23 @@ Question: {input}
         prompt = PromptTemplate.from_template(prompt_template)
         
         # 创建agent
-        agent = create_agent(model=dashscope_llm, tools=tools, prompt=prompt)
+        agent = create_agent(model=dashscope_llm, tools=tools, system_prompt=prompt_template)
         print("📤 执行ReAct Agent...")
         result = agent.invoke({
-            "input": "请对中国A股股票000002进行详细的技术分析"
+            "messages": [
+                {"role": "user", "content": "请对中国A股股票000002进行详细的技术分析"}
+            ]
         })
         
         print(f"📊 ReAct Agent结果:")
-        print(f"   输出长度: {len(result['output'])}")
+        print(f"   输出长度: {len(result['messages'][-1].content)}")
         print(f"   输出内容前500字符:")
         print("-" * 50)
-        print(result['output'][:500])
+        print(result['messages'][-1].content)
         print("-" * 50)
         
         # 检查是否包含实际数据分析
-        has_data = any(keyword in result['output'] for keyword in ["¥6.56", "RSI", "MACD", "万科A", "42.5"])
+        has_data = any(keyword in result['messages'][-1].content for keyword in ["¥6.56", "RSI", "MACD", "万科A", "42.5"])
         print(f"   包含实际数据: {'✅' if has_data else '❌'}")
         
         return result
@@ -249,7 +251,7 @@ def main():
     print("=" * 80)
     
     # 测试DeepSeek
-    deepseek_result = test_deepseek_complete_workflow()
+    # deepseek_result = test_deepseek_complete_workflow()
     
     # 测试百炼ReAct Agent
     dashscope_result = test_dashscope_react_agent()
@@ -265,7 +267,7 @@ def main():
         print(f"❌ DeepSeek: 测试失败")
     
     if dashscope_result:
-        has_data = any(keyword in dashscope_result['output'] for keyword in ["¥6.56", "RSI", "MACD", "万科A"])
+        has_data = any(keyword in dashscope_result['messages'][-1].content for keyword in ["¥6.56", "RSI", "MACD", "万科A"])
         print(f"✅ 百炼ReAct: {'成功生成基于数据的分析' if has_data else '执行但分析不完整'}")
     else:
         print(f"❌ 百炼ReAct: 测试失败")

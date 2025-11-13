@@ -230,12 +230,16 @@ def create_market_analyst_react(llm, toolkit):
             try:
                 # 创建ReAct Agent
                 prompt = hub.pull("hwchase17/react")
-                agent = create_agent(model=llm, tools=tools, prompt=prompt)
+                agent = create_agent(model=llm, tools=tools, system_prompt=prompt)
 
                 logger.debug(f"📈 [DEBUG] 执行ReAct Agent查询...")
-                result = agent.invoke({'input': query})
+                result = agent.invoke({
+                    "messages": [
+                        {"role": "user", "content": query}
+                    ]
+                })
 
-                report = result['output']
+                report = result['messages'][-1].content
                 logger.info(f"📈 [市场分析师] ReAct Agent完成，报告长度: {len(report)}")
 
             except Exception as e:
