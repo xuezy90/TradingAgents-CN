@@ -1,6 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import create_agent
-from langchain import hub
+from langchainhub import Client
 import time
 import json
 import traceback
@@ -229,7 +229,7 @@ def create_market_analyst_react(llm, toolkit):
 
             try:
                 # 创建ReAct Agent
-                prompt = hub.pull("hwchase17/react")
+                prompt = Client().pull("hwchase17/react")
                 agent = create_agent(model=llm, tools=tools, system_prompt=prompt)
 
                 logger.debug(f"📈 [DEBUG] 执行ReAct Agent查询...")
